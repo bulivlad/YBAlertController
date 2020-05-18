@@ -8,15 +8,6 @@
 
 import UIKit
 
-public enum YBAlertControllerStyle {
-    case ActionSheet
-    case Alert
-}
-
-public enum YBButtonActionType {
-    case Selector, Closure
-}
-
 public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
     
     let ybTag = 2345
@@ -26,17 +17,17 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
     
     // titleLabel
     public var titleFont = UIFont(name: "Avenir Next", size: 15)
-    public var titleTextColor = UIColor.blackColor()
+    public var titleTextColor = UIColor.blackColor
     
     // message
     public var message:String?
     public var messageLabel = UILabel()
     public var messageFont = UIFont(name: "Avenir Next", size: 13)
-    public var messageTextColor = UIColor.lightGrayColor()
+    public var messageTextColor = UIColor.lightGrayColor
     
     // button
     public var buttonHeight:CGFloat = 50
-    public var buttonTextColor = UIColor.blackColor()
+    public var buttonTextColor = UIColor.blackColor
     public var buttonIconColor:UIColor?
     public var buttons = [YBButton]()
     public var buttonFont = UIFont(name: "Avenir Next", size: 15)
@@ -44,7 +35,7 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
     // cancelButton
     public var cancelButtonTitle:String?
     public var cancelButtonFont = UIFont(name: "Avenir Next", size: 14)
-    public var cancelButtonTextColor = UIColor.darkGrayColor()
+    public var cancelButtonTextColor = UIColor.darkGrayColor
     
     public var animated = true
     public var containerView = UIView()
@@ -70,7 +61,7 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
         super.init(nibName: nil, bundle: nil)
         view.frame = UIScreen.mainScreen().bounds
         
-        containerView.backgroundColor = UIColor.whiteColor()
+        containerView.backgroundColor = UIColor.whiteColor
         containerView.clipsToBounds = true
         
         let tapGesture = UITapGestureRecognizer(target: self, action: Selector("dismiss"))
@@ -136,7 +127,7 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
                 completion: { (finished) in
                     if self.animated {
                         self.startButtonAppearAnimation()
-                        if let cancelTitle = self.cancelButtonTitle where cancelTitle != "" {
+                        if let cancelTitle = self.cancelButtonTitle, cancelTitle != "" {
                             self.startCancelButtonAppearAnimation()
                         }
                         
@@ -159,7 +150,7 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
                 completion: { (finished) in
                     if self.animated {
                         self.startButtonAppearAnimation()
-                        if let cancelTitle = self.cancelButtonTitle where cancelTitle != "" {
+                        if let cancelTitle = self.cancelButtonTitle, cancelTitle != "" {
                             self.startCancelButtonAppearAnimation()
                         }
                         
@@ -226,7 +217,7 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
         }
         
         var posY:CGFloat = 0
-        if let title = title where title != ""  {
+        if let title = title, title != ""  {
             let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: viewWidth, height: buttonHeight*0.92))
             titleLabel.text = title
             titleLabel.font = titleFont
@@ -244,7 +235,7 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
             posY = 0
         }
         
-        if let message = message where message != "" {
+        if let message = message, message != "" {
             let paddingY:CGFloat = 8
             let paddingX:CGFloat = 10
             messageLabel.font = messageFont
@@ -293,7 +284,7 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
             posY += buttons[i].frame.height
         }
         
-        if let cancelTitle = cancelButtonTitle where cancelTitle != "" {
+        if let cancelTitle = cancelButtonTitle, cancelTitle != "" {
             cancelButton = UIButton(frame: CGRect(x: 0, y: posY, width: viewWidth, height: buttonHeight * 0.9))
             cancelButton.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin]
             cancelButton.titleLabel?.font = cancelButtonFont
@@ -408,103 +399,5 @@ public class YBAlertController: UIViewController, UIGestureRecognizerDelegate {
             control.sendAction(button.selector, to: button.target, forEvent: nil)
         }
         dismiss()
-    }
-}
-
-public class YBButton : UIButton {
-    
-    override public var highlighted : Bool {
-        didSet {
-            alpha = highlighted ? 0.3 : 1.0
-        }
-    }
-    var buttonColor:UIColor? {
-        didSet {
-            if let buttonColor = buttonColor {
-                iconImageView.image = icon?.imageWithRenderingMode(.AlwaysTemplate)
-                iconImageView.tintColor = buttonColor
-                dotView.dotColor = buttonColor
-            } else {
-                iconImageView.image = icon
-            }
-        }
-    }
-    
-    var icon:UIImage?
-    var iconImageView = UIImageView()
-    var textLabel = UILabel()
-    var dotView = DotView()
-    var buttonFont:UIFont? {
-        didSet {
-            textLabel.font = buttonFont
-        }
-    }
-    var actionType:YBButtonActionType!
-    var target:AnyObject!
-    var selector:Selector!
-    var action:(()->Void)!
-    
-    init(frame:CGRect,icon:UIImage?, text:String) {
-        super.init(frame:frame)
-        
-        self.icon = icon
-        let iconHeight:CGFloat = frame.height * 0.45
-        iconImageView.frame = CGRect(x: 9, y: frame.height/2 - iconHeight/2, width: iconHeight, height: iconHeight)
-        iconImageView.image = icon
-        addSubview(iconImageView)
-        
-        dotView.frame = iconImageView.frame
-        dotView.backgroundColor = UIColor.clearColor()
-        dotView.hidden = true
-        addSubview(dotView)
-        
-        let labelHeight = frame.height * 0.8
-        textLabel.frame = CGRect(x: iconImageView.frame.maxX + 11, y: frame.midY - labelHeight/2, width: frame.width - iconImageView.frame.maxX, height: labelHeight)
-        textLabel.text = text
-        textLabel.textColor = UIColor.blackColor()
-        textLabel.font = buttonFont
-        addSubview(textLabel)
-    }
-    
-    func appear() {
-        iconImageView.transform = CGAffineTransformMakeScale(0, 0)
-        textLabel.transform = CGAffineTransformMakeScale(0, 0)
-        dotView.transform = CGAffineTransformMakeScale(0, 0)
-        dotView.hidden = false
-        UIView.animateWithDuration(0.2, animations: {
-            self.textLabel.transform = CGAffineTransformMakeScale(1.0, 1.0)
-        })
-        
-        UIView.animateWithDuration(0.2, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .CurveLinear, animations: {
-            
-            if self.iconImageView.image == nil {
-                self.dotView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-            } else {
-                self.iconImageView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-            }
-            }, completion: nil)
-    }
-    
-    required public init?(coder aDecoder:NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override public func drawRect(rect: CGRect) {
-        UIColor(white: 0.85, alpha: 1.0).setStroke()
-        let line = UIBezierPath()
-        line.lineWidth = 1
-        line.moveToPoint(CGPoint(x: iconImageView.frame.maxX + 5, y: frame.height))
-        line.addLineToPoint(CGPoint(x: frame.width , y: frame.height))
-        line.stroke()
-    }
-}
-
-class DotView:UIView {
-    var dotColor = UIColor.blackColor()
-    
-    override func drawRect(rect: CGRect) {
-        dotColor.setFill()
-        let circle = UIBezierPath(arcCenter: CGPoint(x: frame.width/2, y: frame.height/2), radius: 3, startAngle: 0, endAngle: 360, clockwise: true)
-        circle.fill()
     }
 }
